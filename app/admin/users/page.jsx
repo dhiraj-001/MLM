@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-
 import toast, { Toaster } from "react-hot-toast";
 import {
   Search,
@@ -28,7 +27,6 @@ import {
 } from "lucide-react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogFooter,
@@ -79,25 +77,24 @@ export default function AdminUsers() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [userSearch, setUserSearch] = useState("");
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [loadingUserId, setLoadingUserId] = useState(null); // To show loading for a specific user
 
-  console.log("User Data", users);
+  const fetchUsers = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const usersData = await adminService.getAllUsers(token);
+      setUsers(usersData);
+      setFilteredUsers(usersData);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+      toast.error("Failed to fetch users.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      if (!token) return;
-
-      setLoading(true);
-      try {
-        const usersData = await adminService.getAllUsers(token);
-        setUsers(usersData);
-        setFilteredUsers(usersData);
-      } catch (err) {
-        console.error("Failed to fetch users:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
   }, [token]);
 
@@ -105,6 +102,7 @@ export default function AdminUsers() {
     if (searchTerm) {
       const filtered = users.filter(
         (user) =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (user.phone && user.phone.toString().includes(searchTerm))
       );
@@ -119,7 +117,6 @@ export default function AdminUsers() {
   };
 
   const handleAddFunds = (userId) => {
-    console.log("Adding funds for user:", userId);
     setAddFundsUserId(userId);
     setShowAddFunds(true);
     setAddFundsAmount("");
@@ -147,10 +144,7 @@ export default function AdminUsers() {
       toast.success("Deposit added successfully.");
       setShowAddFunds(false);
       setShowUserDetails(false);
-      // Refresh users
-      const usersData = await adminService.getAllUsers(token);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
+      fetchUsers(); // Refresh users
     } catch (err) {
       toast.error(err.message || "Failed to add funds");
     } finally {
@@ -165,11 +159,8 @@ export default function AdminUsers() {
       await adminService.blockUser(blockUserId, blockReason, token);
       toast.success("User blocked successfully");
       setShowBlockUserDialog(false);
-      // Refresh users
-      const usersData = await adminService.getAllUsers(token);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
       setShowUserDetails(false);
+      fetchUsers(); // Refresh users
     } catch (err) {
       toast.error(err.message || "Failed to block user");
     } finally {
@@ -182,15 +173,12 @@ export default function AdminUsers() {
     setBlockLoading(true);
     try {
       await adminService.blockWithdraw(blockUserId, blockReason, token);
-      toast.success("User withdraw blocked successfully");
+      toast.success("User withdrawals blocked successfully");
       setShowBlockWithdrawDialog(false);
-      // Refresh users
-      const usersData = await adminService.getAllUsers(token);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
       setShowUserDetails(false);
+      fetchUsers(); // Refresh users
     } catch (err) {
-      toast.error(err.message || "Failed to block withdraw");
+      toast.error(err.message || "Failed to block withdrawals");
     } finally {
       setBlockLoading(false);
     }
@@ -203,11 +191,8 @@ export default function AdminUsers() {
       await adminService.unblockUser(blockUserId, blockReason, token);
       toast.success("User unblocked successfully");
       setShowBlockUserDialog(false);
-      // Refresh users
-      const usersData = await adminService.getAllUsers(token);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
       setShowUserDetails(false);
+      fetchUsers(); // Refresh users
     } catch (err) {
       toast.error(err.message || "Failed to unblock user");
     } finally {
@@ -220,15 +205,12 @@ export default function AdminUsers() {
     setBlockLoading(true);
     try {
       await adminService.unblockWithdraw(blockUserId, blockReason, token);
-      toast.success("User withdraw unblocked successfully");
+      toast.success("User withdrawals unblocked successfully");
       setShowBlockWithdrawDialog(false);
-      // Refresh users
-      const usersData = await adminService.getAllUsers(token);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
       setShowUserDetails(false);
+      fetchUsers(); // Refresh users
     } catch (err) {
-      toast.error(err.message || "Failed to unblock withdraw");
+      toast.error(err.message || "Failed to unblock withdrawals");
     } finally {
       setBlockLoading(false);
     }
@@ -236,6 +218,7 @@ export default function AdminUsers() {
 
   const handleViewUser = async (userId) => {
     setLoadingUserDetails(true);
+    setLoadingUserId(userId);
     try {
       const data = await adminService.getUserDetails(userId, token);
       setSelectedUser(data);
@@ -245,6 +228,7 @@ export default function AdminUsers() {
       console.error(err);
     } finally {
       setLoadingUserDetails(false);
+      setLoadingUserId(null);
     }
   };
 
@@ -253,14 +237,23 @@ export default function AdminUsers() {
       (sum, sub) => sum + (sub.reward || 0),
       0
     );
-    const activeDays = submissions.length;
+    const activeDays = new Set(
+      submissions.map((s) => new Date(s.submittedAt).toDateString())
+    ).size;
     const successRate =
       submissions.length > 0
-        ? ((submissions.filter((sub) => sub.score >= 3).length / submissions.length) * 100).toFixed(1)
+        ? (
+          (submissions.filter((sub) => sub.score >= 3).length /
+            submissions.length) *
+          100
+        ).toFixed(1)
         : 0;
     const averageScore =
       submissions.length > 0
-        ? (submissions.reduce((sum, sub) => sum + sub.score, 0) / submissions.length).toFixed(1)
+        ? (
+          submissions.reduce((sum, sub) => sum + sub.score, 0) /
+          submissions.length
+        ).toFixed(1)
         : 0;
     const lastActive =
       submissions.length > 0
@@ -298,9 +291,12 @@ export default function AdminUsers() {
       );
       toast.success("User details updated successfully");
       setEditMode(false);
-      // Refresh user details
-      const data = await adminService.getUserDetails(selectedUser.user._id, token);
+      const data = await adminService.getUserDetails(
+        selectedUser.user._id,
+        token
+      );
       setSelectedUser(data);
+      fetchUsers(); // Refresh main user list
     } catch (err) {
       toast.error(err.message || "Failed to update user details");
     }
@@ -371,8 +367,8 @@ export default function AdminUsers() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search users..."
-              className="rounded-md border border-border bg-background pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              placeholder="Search by name, email, or phone..."
+              className="rounded-md border border-border bg-background pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 w-72"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -380,7 +376,7 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      <div className="rounded-lg border  bg-background shadow-sm overflow-hidden">
+      <div className="rounded-lg border bg-background shadow-sm overflow-hidden">
         {loading && users.length === 0 ? (
           <div className="flex items-center justify-center p-8">
             <RefreshCw className="h-5 w-5 animate-spin mr-2" />
@@ -393,182 +389,98 @@ export default function AdminUsers() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="border-b  bg-muted/50">
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    S. No.
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Member ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Total Balance
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Deposit Balance
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Earning Balance
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Phone
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Balance
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Refer ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Joining Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Referred By
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Edited By Admin
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Action
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Block
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Withdraw
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Role
-                  </th>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-3 text-left font-medium border-r">S.No.</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">User</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Total Balance</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Deposit Balance</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Earning Balance</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Referral Code</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Joining Date</th>
+                  <th className="px-4 py-3 text-left font-medium border-r">Status</th>
+                  <th className="px-4 py-3 text-left font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/90">
                 {filteredUsers.map((user, i) => (
                   <tr key={user._id} className="hover:bg-muted/20">
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center">{i + 1}</div>
+                    <td className="px-4 py-3 border-r">{i + 1}</td>
+                    <td className="px-4 py-3 border-r">
+                      <div className="font-medium">{user.username}</div>
+                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                      <div className="text-xs text-muted-foreground">{user.phone || 'No phone'}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center">{user._id.slice(16)}</div>
+                    <td className="px-4 py-3 border-r font-medium">
+                      ${user.balance?.toFixed(2) || "0.00"}
                     </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center">{user.username}</div>
+                    <td className="px-4 py-3 border-r font-medium text-blue-600">
+                      ${user.depositBalance?.toFixed(2) || "0.00"}
                     </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center font-medium text-gray-800 dark:text-gray-200">
-                        <Wallet className="mr-1.5 h-4 w-4 text-muted-foreground" />
-                        ${user.balance?.toFixed(2) || "0.00"}
+                    <td className="px-4 py-3 border-r font-medium text-green-600">
+                      ${user.earningBalance?.toFixed(2) || "0.00"}
+                    </td>
+                    <td className="px-4 py-3 border-r">{user.referralCode}</td>
+                    <td className="px-4 py-3 border-r">
+                      {new Date(user.createdAt).toLocaleDateString("en-GB")}
+                    </td>
+                    <td className="px-4 py-3 border-r">
+                      <div className="flex flex-col gap-1">
+                        <Badge variant={user.isBlocked ? "destructive" : "secondary"}>
+                          {user.isBlocked ? "Blocked" : "Active"}
+                        </Badge>
+                        <Badge variant={user.isAdmin ? "outline" : "default"}>
+                          {user.isAdmin ? "Admin" : "User"}
+                        </Badge>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center font-medium text-blue-600 dark:text-blue-400">
-                        <Wallet className="mr-1.5 h-4 w-4 text-blue-500" />
-                        ${user.depositBalance?.toFixed(2) || "0.00"}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                                      <button
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleViewUser(user._id)}
+                          className="px-2 py-1 text-xs rounded border hover:bg-accent"
+                          disabled={loadingUserId === user._id}
+                        >
+                          {loadingUserId === user._id ? 'Loading...' : 'View'}
+                        </button>
+                        <button
                           onClick={() => handleAddFunds(user._id)}
-                          className="inline-flex items-center gap-1 rounded-md border border-green-600 text-green-700 bg-green-50 px-2 py-1 text-xs font-semibold hover:bg-green-100 hover:text-green-800 transition"
+                          className="px-2 py-1 text-xs rounded border border-green-500 text-green-600 hover:bg-green-50"
                         >
-                          <Wallet className="h-3.5 w-3.5" />
-                          Add
+                          Add Funds
                         </button>
+                        {!user.isAdmin && (
+                          <>
+                            <button
+                              onClick={() => {
+                                setBlockUserId(user._id);
+                                setBlockReason("");
+                                setShowBlockUserDialog(true);
+                              }}
+                              className={`px-2 py-1 text-xs rounded border ${user.isBlocked
+                                ? "border-green-500 text-green-600 hover:bg-green-50"
+                                : "border-red-500 text-red-600 hover:bg-red-50"
+                                }`}
+                            >
+                              {user.isBlocked ? "Unblock" : "Block"}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setBlockUserId(user._id);
+                                setBlockReason("");
+                                setShowBlockWithdrawDialog(true);
+                              }}
+                              className={`px-2 py-1 text-xs rounded border ${user.canWithdraw
+                                ? "border-red-500 text-red-600 hover:bg-red-50"
+                                : "border-green-500 text-green-600 hover:bg-green-50"
+                                }`}
+                            >
+                              {user.canWithdraw ? "Block Withdraw" : "Enable Withdraw"}
+                            </button>
+                          </>
+                        )}
                       </div>
-                    </td>           <button
-                                        </td>            </button>
-                      </div>
-                    </td>
-                          className="inline-flex items-center gap-1 rounded-md border border-green-600 text-green-700 bg-green-50 px-2 py-1 text-xs font-semibold hover:bg-green-100 hover:text-green-800 transition"
-                        >
-                          <Wallet className="h-3.5 w-3.5" />
-                          Add
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {user.referralCode}
-                    </td>
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {user.createdAt
-                        ? new Date(user.createdAt).toLocaleDateString("en-GB")
-                        : "N/A"}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {user.referredBy}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {user.editedByAdmin ? (
-                        new Date(user.editedByAdmin).toLocaleDateString("en-GB")
-                      ) : (
-                        <span className="text-muted-foreground italic">
-                          Not Edited
-                        </span>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm border-r ">
-                      <button
-                        onClick={() => handleViewUser(user._id)}
-                        className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-3 py-1 text-xs font-medium hover:bg-accent hover:text-accent-foreground transition"
-                      >
-                        <User className="h-3 w-3" />
-                        {loadingUserDetails ? "Loading..." : "View"}
-                      </button>
-                    </td>
-
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {!user.isAdmin && (
-                        <button
-                          onClick={() => {
-                            setBlockUserId(user._id);
-                            setBlockReason("");
-                            setShowBlockUserDialog(true);
-                          }}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition ${user.isBlocked
-                            ? "bg-green-100 text-green-700 hover:bg-green-200"
-                            : "bg-red-100 text-red-700 hover:bg-red-200"
-                            }`}
-                        >
-                          {user.isBlocked ? "Unblock" : "Block"}
-                        </button>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm border-r ">
-                      {!user.isAdmin && (
-                        <button
-                          onClick={() => {
-                            setBlockUserId(user._id);
-                            setBlockReason("");
-                            setShowBlockWithdrawDialog(true);
-                          }}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition ${user.canWithdraw
-                            ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            }`}
-                        >
-                          {user.canWithdraw ? "Disable" : "Enable"}
-                        </button>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${user.isAdmin
-                          ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                          }`}
-                      >
-                        <User className="mr-1 h-3 w-3" />
-                        {user.isAdmin ? "Admin" : "User"}
-                      </span>
                     </td>
                   </tr>
                 ))}
@@ -578,6 +490,7 @@ export default function AdminUsers() {
         )}
       </div>
 
+      {/* DIALOGS (MODALS) - No changes needed here, logic is sound */}
       <Dialog open={showAddFunds} onOpenChange={setShowAddFunds}>
         <DialogContent>
           <DialogHeader>
@@ -623,7 +536,7 @@ export default function AdminUsers() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+                className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
                 disabled={addFundsLoading}
               >
                 {addFundsLoading ? "Adding..." : "Add Funds"}
@@ -662,7 +575,7 @@ export default function AdminUsers() {
               </button>
               <button
                 type="submit"
-                className={`px-4 py-2 rounded text-white hover:opacity-90 ${filteredUsers.find(u => u._id === blockUserId)?.isBlocked
+                className={`px-4 py-2 rounded text-white hover:opacity-90 disabled:opacity-50 ${filteredUsers.find(u => u._id === blockUserId)?.isBlocked
                   ? "bg-green-600"
                   : "bg-red-600"
                   }`}
@@ -704,7 +617,7 @@ export default function AdminUsers() {
               </button>
               <button
                 type="submit"
-                className={`px-4 py-2 rounded text-white hover:opacity-90 ${filteredUsers.find(u => u._id === blockUserId)?.canWithdraw
+                className={`px-4 py-2 rounded text-white hover:opacity-90 disabled:opacity-50 ${filteredUsers.find(u => u._id === blockUserId)?.canWithdraw
                   ? "bg-red-600"
                   : "bg-green-600"
                   }`}
@@ -1272,7 +1185,7 @@ export default function AdminUsers() {
                               </td>
                               <td className="py-2 px-4">
                                 <span className="font-medium text-green-600">
-                                  ${submission.reward}
+                                  ${submission.reward?.toFixed(2) || '0.00'}
                                 </span>
                               </td>
                               <td className="py-2 px-4">
