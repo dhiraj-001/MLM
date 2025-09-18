@@ -403,7 +403,13 @@ export default function AdminUsers() {
                     Member ID
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium border-r ">
-                    Name
+                    Total Balance
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
+                    Deposit Balance
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium border-r ">
+                    Earning Balance
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium border-r ">
                     Email
@@ -453,26 +459,30 @@ export default function AdminUsers() {
                       <div className="flex items-center">{user.username}</div>
                     </td>
                     <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center">
-                        <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-                        {user.email}
+                      <div className="flex items-center font-medium text-gray-800 dark:text-gray-200">
+                        <Wallet className="mr-1.5 h-4 w-4 text-muted-foreground" />
+                        ${user.balance?.toFixed(2) || "0.00"}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center">
-                        <Phone className="mr-2 h-4 w-4 text-muted-foreground" />
-                        {user.phone}
+                      <div className="flex items-center font-medium text-blue-600 dark:text-blue-400">
+                        <Wallet className="mr-1.5 h-4 w-4 text-blue-500" />
+                        ${user.depositBalance?.toFixed(2) || "0.00"}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm border-r ">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center font-medium text-gray-800 dark:text-gray-200">
-                          <Wallet className="mr-1.5 h-4 w-4 text-muted-foreground" />
-                          ${user.balance?.toFixed(2) || "0.00"}
-                        </div>
-
-                        <button
+                                      <button
                           onClick={() => handleAddFunds(user._id)}
+                          className="inline-flex items-center gap-1 rounded-md border border-green-600 text-green-700 bg-green-50 px-2 py-1 text-xs font-semibold hover:bg-green-100 hover:text-green-800 transition"
+                        >
+                          <Wallet className="h-3.5 w-3.5" />
+                          Add
+                        </button>
+                      </div>
+                    </td>           <button
+                                        </td>            </button>
+                      </div>
+                    </td>
                           className="inline-flex items-center gap-1 rounded-md border border-green-600 text-green-700 bg-green-50 px-2 py-1 text-xs font-semibold hover:bg-green-100 hover:text-green-800 transition"
                         >
                           <Wallet className="h-3.5 w-3.5" />

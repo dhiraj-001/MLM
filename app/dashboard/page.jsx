@@ -17,6 +17,7 @@ import {
   RefreshCw,
   CreditCard,
   User,
+  Wallet,
 } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { userService } from "@/services/api"
@@ -143,7 +144,7 @@ export default function Dashboard() {
     {
       id: 1,
       type: "deposit",
-      amount: userData?.balance || 0,
+      amount: userData?.depositBalance || 0,
       currency: "USD",
       date: "Today",
       status: "completed",
@@ -190,7 +191,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
           {[
             {
               title: "Total Balance",
@@ -199,6 +200,22 @@ export default function Dashboard() {
               isPositive: true,
               icon: DollarSign,
               color: "primary",
+            },
+            {
+              title: "Deposit Balance",
+              value: `$${userData?.depositBalance?.toFixed(2) || "0.00"}`,
+              change: "",
+              isPositive: true,
+              icon: Wallet,
+              color: "blue",
+            },
+            {
+              title: "Earning Balance",
+              value: `$${userData?.earningBalance?.toFixed(2) || "0.00"}`,
+              change: "",
+              isPositive: true,
+              icon: TrendingUp,
+              color: "green",
             },
             {
               title: "Direct Referrals",
@@ -215,15 +232,6 @@ export default function Dashboard() {
               isPositive: true,
               icon: TrendingUp,
               color: "green",
-            },
-            {
-              title: "Team Size",
-              value: referralStats?.totalTeamMembers || "0",
-              change: "",
-              isPositive: null,
-              icon: Star,
-              color: "amber",
-              hasProgress: false,
             },
           ].map((stat, index) => (
             <motion.div
@@ -244,7 +252,9 @@ export default function Dashboard() {
                           ? "text-indigo-500"
                           : stat.color === "green"
                             ? "text-green-500"
-                            : "text-amber-500"
+                            : stat.color === "blue"
+                              ? "text-blue-500"
+                              : "text-amber-500"
                     }`}
                   />
                 </div>
@@ -267,15 +277,6 @@ export default function Dashboard() {
                       </span>
                     )}
                   </div>
-                  {stat.hasProgress && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-muted-foreground">Progress to Next Level</span>
-                        <span className="text-xs font-medium">{progress}%</span>
-                      </div>
-                      <Progress value={progress} className="h-1.5" />
-                    </div>
-                  )}
                 </div>
               </Card>
             </motion.div>

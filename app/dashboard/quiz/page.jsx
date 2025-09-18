@@ -18,7 +18,9 @@ import {
   RefreshCw,
   RotateCw,
   Timer,
-  DollarSign
+  DollarSign,
+  Wallet,
+  TrendingUp
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -41,6 +43,8 @@ export default function QuizPage() {
   const [todayResults, setTodayResults] = useState(null)
   const [userData, setUserData] = useState(null)
   const [insufficientBalance, setInsufficientBalance] = useState(false)
+  const [balanceOptions, setBalanceOptions] = useState(null)
+  const [selectedBalanceType, setSelectedBalanceType] = useState(null)
   
   // Get user profile data to check balance
   useEffect(() => {
@@ -50,11 +54,6 @@ export default function QuizPage() {
       try {
         const profileData = await userService.getProfile(token)
         setUserData(profileData.user)
-        
-        // Check if user has minimum required balance
-        if (profileData.user?.balance < 30) {
-          setInsufficientBalance(true)
-        }
       } catch (err) {
         console.error("Failed to fetch user data:", err)
       }
@@ -90,12 +89,6 @@ export default function QuizPage() {
   const fetchQuizQuestions = async () => {
     setLoading(true)
     try {
-      if (userData?.balance < 30) {
-        setInsufficientBalance(true)
-        setLoading(false)
-        return
-      }
-      
       const response = await userService.getQuizQuestions(token)
       console.log("Quiz data:", response)
       
@@ -105,6 +98,7 @@ export default function QuizPage() {
         setTodayResults(response.results)
       } else if (response.questions && response.questions.length > 0) {
         setQuestions(response.questions)
+        setBalanceOptions(response.balanceOptions)
       } else {
         setError("No questions available for today's quiz.")
       }
@@ -129,8 +123,8 @@ export default function QuizPage() {
   
   // Start the quiz
   const startQuiz = () => {
-    if (userData?.balance < 30) {
-      setInsufficientBalance(true)
+    if (!selectedBalanceType) {
+      setError("Please select a balance type to play the quiz")
       return
     }
     
@@ -175,7 +169,7 @@ export default function QuizPage() {
       // Format answers for submission - convert from object to array
       const formattedAnswers = Object.values(answers)
       
-      const response = await userService.submitQuiz(formattedAnswers, token)
+      const response = await userService.submitQuiz(formattedAnswers, selectedBalanceType, token)
       console.log("Quiz submission response:", response)
       
       setQuizResults(response)
@@ -236,31 +230,49 @@ export default function QuizPage() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold">Minimum Balance Required</h2>
-                    <p className="text-muted-foreground">You need at least $30 balance to participate in the quiz</p>
+                    <p className="text-muted-foreground">You need at least $30 in either deposit or earning balance to participate in the quiz</p>
                   </div>
                 </div>
               </div>
               
               <div className="p-6">
-                <div className="bg-muted/30 rounded-lg p-6 mb-6 text-center">
-                  <h3 className="text-lg font-semibold mb-2">Your Current Balance</h3>
-                  <div className="text-3xl font-bold text-amber-500 mb-2">
-                    ${userData?.balance?.toFixed(2) || "0.00"}
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="h-2 w-full max-w-md bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-amber-500 transition-all duration-300 ease-out"
-                        style={{ width: `${Math.min((userData?.balance / 30) * 100, 100)}%` }}
-                      ></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-muted/30 rounded-lg p-4 text-center">
+                    <h3 className="text-lg font-semibold mb-2">Deposit Balance</h3>
+                    <div className="text-2xl font-bold text-blue-500 mb-2">
+                      ${userData?.depositBalance?.toFixed(2) || "0.00"}
                     </div>
-                    <span className="text-xs whitespace-nowrap">$30 min</span>
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                          style={{ width: `${Math.min((userData?.depositBalance / 30) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs whitespace-nowrap">$30 min</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-muted/30 rounded-lg p-4 text-center">
+                    <h3 className="text-lg font-semibold mb-2">Earning Balance</h3>
+                    <div className="text-2xl font-bold text-green-500 mb-2">
+                      ${userData?.earningBalance?.toFixed(2) || "0.00"}
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500 transition-all duration-300 ease-out"
+                          style={{ width: `${Math.min((userData?.earningBalance / 30) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs whitespace-nowrap">$30 min</span>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="space-y-4">
                   <p className="text-center">
-                    Please deposit at least ${(30 - (userData?.balance || 0)).toFixed(2)} more to participate in the daily quiz challenge and earn rewards.
+                    Please deposit funds or earn rewards to reach at least $30 in either balance to participate in the daily quiz challenge.
                   </p>
                   
                   <div className="flex justify-center gap-4">
@@ -327,7 +339,7 @@ export default function QuizPage() {
                     <div className="text-3xl font-bold text-green-500">
                       ${todayResults?.reward?.toFixed(2) || "0.00"}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">2% of your balance</p>
+                    <p className="text-xs text-muted-foreground mt-1">2% of your {todayResults?.balanceType || 'selected'} balance</p>
                   </div>
                   
                   <div className="bg-muted/30 rounded-lg p-4 flex flex-col items-center justify-center">
@@ -390,7 +402,7 @@ export default function QuizPage() {
                     <div className="text-3xl font-bold text-green-500">
                       ${quizResults?.reward?.toFixed(2) || "0.00"}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">2% of your balance</p>
+                    <p className="text-xs text-muted-foreground mt-1">2% of your {quizResults?.balanceType || 'selected'} balance</p>
                   </div>
                   
                   <div className="bg-muted/30 rounded-lg p-4 flex flex-col items-center justify-center">
@@ -407,9 +419,26 @@ export default function QuizPage() {
                 {quizResults?.newBalance && (
                   <div className="bg-muted/30 rounded-lg p-4 mb-6">
                     <div className="text-center">
-                      <h3 className="text-lg font-semibold mb-1">Updated Balance</h3>
-                      <div className="text-2xl font-bold text-primary">
-                        ${quizResults.newBalance.toFixed(2)}
+                      <h3 className="text-lg font-semibold mb-1">Updated Balances</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Total Balance</p>
+                          <div className="text-xl font-bold text-primary">
+                            ${quizResults.newBalance.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Deposit Balance</p>
+                          <div className="text-xl font-bold text-blue-500">
+                            ${quizResults.newDepositBalance.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Earning Balance</p>
+                          <div className="text-xl font-bold text-green-500">
+                            ${quizResults.newEarningBalance.toFixed(2)}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -449,17 +478,74 @@ export default function QuizPage() {
                 </div>
               </div>
               <div className="p-6 md:p-8">
-                <div className="mb-6 bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
-                  <div className="flex items-center">
-                    <DollarSign className="h-5 w-5 text-amber-500 mr-2" />
-                    <span className="font-medium">
-                      Minimum $30 balance required to participate
-                    </span>
+                {/* Balance Selection */}
+                {balanceOptions && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-4">Choose Your Balance Type</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <button
+                        onClick={() => setSelectedBalanceType('deposit')}
+                        disabled={!balanceOptions.depositEligible}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          selectedBalanceType === 'deposit'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : balanceOptions.depositEligible
+                              ? 'border-border hover:border-blue-300 hover:bg-blue-50/50'
+                              : 'border-border opacity-50 cursor-not-allowed'
+                        }`}
+                      >
+                        <div className="flex items-center mb-2">
+                          <Wallet className="h-5 w-5 text-blue-500 mr-2" />
+                          <span className="font-medium">Deposit Balance</span>
+                        </div>
+                        <div className="text-2xl font-bold text-blue-500 mb-1">
+                          ${balanceOptions.depositBalance?.toFixed(2) || "0.00"}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {balanceOptions.depositEligible ? 'Eligible' : 'Minimum $30 required'}
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => setSelectedBalanceType('earning')}
+                        disabled={!balanceOptions.earningEligible}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          selectedBalanceType === 'earning'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                            : balanceOptions.earningEligible
+                              ? 'border-border hover:border-green-300 hover:bg-green-50/50'
+                              : 'border-border opacity-50 cursor-not-allowed'
+                        }`}
+                      >
+                        <div className="flex items-center mb-2">
+                          <TrendingUp className="h-5 w-5 text-green-500 mr-2" />
+                          <span className="font-medium">Earning Balance</span>
+                        </div>
+                        <div className="text-2xl font-bold text-green-500 mb-1">
+                          ${balanceOptions.earningBalance?.toFixed(2) || "0.00"}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {balanceOptions.earningEligible ? 'Eligible' : 'Minimum $30 required'}
+                        </div>
+                      </button>
+                    </div>
+                    
+                    {selectedBalanceType && (
+                      <div className="bg-muted/30 rounded-lg p-4 mb-4">
+                        <div className="flex items-center">
+                          <DollarSign className="h-5 w-5 text-primary mr-2" />
+                          <span className="font-medium">
+                            Selected: {selectedBalanceType === 'deposit' ? 'Deposit' : 'Earning'} Balance
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Rewards will be calculated as 2% of your {selectedBalanceType} balance and added to your earning balance.
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 ml-7">
-                    Your current balance: ${userData?.balance?.toFixed(2) || "0.00"}
-                  </p>
-                </div>
+                )}
+                
                 <div className="mb-8">
                   <h3 className="text-lg font-semibold mb-4">Quiz Rules</h3>
                   <ul className="space-y-3 ml-2">
@@ -473,7 +559,7 @@ export default function QuizPage() {
                     </li>
                     <li className="flex items-start">
                       <Award className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Earn up to $5 in rewards based on your score</span>
+                      <span>Earn 2% of your selected balance as reward</span>
                     </li>
                     <li className="flex items-start">
                       <AlertCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
@@ -484,7 +570,8 @@ export default function QuizPage() {
                 <div className="flex justify-center">
                   <button
                     onClick={startQuiz}
-                    className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 flex items-center"
+                    disabled={!selectedBalanceType}
+                    className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Start Quiz <ChevronRight className="ml-2 h-5 w-5" />
                   </button>

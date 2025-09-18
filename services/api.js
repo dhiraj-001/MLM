@@ -273,51 +273,14 @@ export const userService = {
    * Get quiz questions
    */
   async getQuizQuestions(token) {
-    try {
-      const response = await fetch(`${API_URL}/users/quiz`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch quiz questions");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching quiz questions:", error);
-      throw error;
-    }
+    return apiService.get("/users/quiz", token);
   },
 
   /**
    * Submit quiz answers
    */
-  async submitQuiz(answers, token) {
-    try {
-      const response = await fetch(`${API_URL}/users/quiz`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ answers }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit quiz");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error submitting quiz:", error);
-      throw error;
-    }
+  async submitQuiz(answers, balanceType, token) {
+    return apiService.post("/users/quiz", { answers, balanceType }, token);
   },
 
   /**
