@@ -154,7 +154,7 @@ export default function WithdrawalPage() {
               <li>Minimum withdrawal amount is $50.</li>
               <li>Withdrawals are processed within 2-3 business days.</li>
               <li>Ensure your bank details are accurate to avoid processing delays.</li>
-              <li>A 2% processing fee applies to all withdrawals.</li>
+              <li>A 5% processing fee applies to all withdrawals.</li>
             </ul>
           </div>
 
