@@ -8,6 +8,7 @@ import {
   useScroll,
   useTransform,
   AnimatePresence,
+  animate,
 } from "framer-motion";
 import {
   ArrowRight,
@@ -52,39 +53,14 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Animated counter component
-  const Counter = ({ end, duration = 2, prefix = "", suffix = "" }) => {
-    const [count, setCount] = useState(0);
-    const countRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: countRef,
-      offset: ["start bottom", "end center"],
-    });
-
-    useEffect(() => {
-      const unsubscribe = scrollYProgress.onChange((value) => {
-        if (value > 0.1) {
-          const timer = setTimeout(() => {
-            const increment = end / (duration * 60);
-            setCount((prev) => {
-              const newValue = prev + increment;
-              return newValue >= end ? end : newValue;
-            });
-          }, 1000 / 60);
-
-          return () => clearTimeout(timer);
-        }
-      });
-
-      return () => unsubscribe();
-    }, [scrollYProgress, end, duration]);
-
+  // Counter component
+  const Counter = ({ end, prefix = "", suffix = "" }) => {
     return (
-      <div ref={countRef}>
+      <>
         {prefix}
-        {Math.floor(count).toLocaleString()}
+        {end.toLocaleString()}
         {suffix}
-      </div>
+      </>
     );
   };
 
@@ -350,7 +326,7 @@ export default function Home() {
               className="text-base sm:text-lg text-muted-foreground"
             >
               Join our professional network of{" "}
-              <span className="text-primary font-semibold">10,000+</span>{" "}
+              <span className="text-primary font-semibold">12,000+</span>{" "}
               partners building sustainable income through our proven
               multi-level trading system.
             </motion.p>
@@ -442,7 +418,7 @@ export default function Home() {
                         Total Partners
                       </p>
                       <h3 className="text-3xl font-bold">
-                        <Counter end={10583} prefix="" suffix="+" />
+                        <Counter end={12000} prefix="" suffix="+" />
                       </h3>
                     </div>
                     <div>
@@ -450,7 +426,7 @@ export default function Home() {
                         Active Countries
                       </p>
                       <h3 className="text-3xl font-bold">
-                        <Counter end={32} prefix="" suffix="+" />
+                        <Counter end={50} prefix="" suffix="+" />
                       </h3>
                     </div>
                   </div>
@@ -577,21 +553,21 @@ export default function Home() {
             {[
               {
                 icon: Users,
-                value: 10583,
+                value: 12000,
                 label: "Global Partners",
                 suffix: "+",
                 delay: 0.1,
               },
               {
                 icon: Globe,
-                value: 32,
+                value: 50,
                 label: "Countries",
                 suffix: "+",
                 delay: 0.2,
               },
               {
                 icon: BarChart3,
-                value: 14.1,
+                value: 132,
                 label: "Paid Commissions",
                 prefix: "$",
                 suffix: "M",
@@ -599,7 +575,7 @@ export default function Home() {
               },
               {
                 icon: Award,
-                value: 98,
+                value: 95,
                 label: "Satisfaction Rate",
                 suffix: "%",
                 delay: 0.4,
@@ -768,97 +744,131 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 relative overflow-hidden" id="testimonials">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+<section className="py-24 relative overflow-hidden" id="testimonials">
+  {/* Top border gradient */}
+  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16 max-w-3xl mx-auto"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-6">
-              <Users className="h-4 w-4" />
-              <span>Success Stories</span>
+  <div className="container mx-auto px-4 relative z-10">
+    {/* Section Heading */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="text-center mb-16 max-w-3xl mx-auto"
+    >
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-6">
+        <Users className="h-4 w-4" />
+        <span>Success Stories</span>
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold mb-4 font-serif">
+        What Our Partners Say
+      </h2>
+      <p className="text-muted-foreground text-lg">
+        Hear from people who have transformed their lives through our trading
+        network
+      </p>
+    </motion.div>
+
+    {/* Testimonial Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {[
+        {
+          name: "Sarah Johnson",
+          role: "Executive Partner",
+          image: "/testimonials/1.png",
+          quote:
+            "I've been with the network for 2 years and have built a team of over 500 partners. The training and support are unmatched.",
+          delay: 0.1,
+        },
+        {
+          name: "Michael Chen",
+          role: "Senior Trader",
+          image: "/testimonials/2.png",
+          quote:
+            "The compensation plan is the best I've seen in the industry. I was able to replace my full-time income within 6 months.",
+          delay: 0.2,
+        },
+        {
+          name: "Elena Rodriguez",
+          role: "Regional Director",
+          image: "/testimonials/3.png",
+          quote:
+            "What sets this network apart is the community. Everyone is genuinely invested in each other's success.",
+          delay: 0.3,
+        },
+        {
+          name: "David Kim",
+          role: "Wealth Coach",
+          image: "/testimonials/4.png",
+          quote:
+            "I started with zero experience, and now I coach others on financial freedom. The mentorship here has changed my life.",
+          delay: 0.4,
+        },
+        {
+          name: "Priya Patel",
+          role: "Entrepreneur",
+          image: "/testimonials/5.png",
+          quote:
+            "Joining this network gave me the flexibility to work from anywhere while scaling my income faster than I imagined.",
+          delay: 0.5,
+        },
+        {
+          name: "James Anderson",
+          role: "Platinum Leader",
+          image: "/testimonials/6.png",
+          quote:
+            "The leadership program pushed me beyond my limits. Now, I’m leading a thriving team across three countries.",
+          delay: 0.6,
+        },
+      ].map((testimonial, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: testimonial.delay }}
+          viewport={{ once: true }}
+          whileHover={{ y: -8 }}
+          className="group"
+        >
+          <div className="relative bg-gradient-to-br from-background/60 to-background/30 backdrop-blur-xl border border-border/40 rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 h-full overflow-hidden">
+            {/* Glow border effect on hover */}
+            <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-primary/40 transition-all duration-500"></div>
+
+            {/* Decorative Quote */}
+            <div className="absolute top-0 right-6 text-[80px] opacity-10 font-serif leading-none">
+              “
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 font-serif">
-              What Our Partners Say
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Hear from people who have transformed their lives through our
-              trading network
+
+            {/* Quote Text */}
+            <p className="text-lg mb-8 relative z-10 italic text-foreground/90">
+              {testimonial.quote}
             </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "Executive Partner",
-                image: "/placeholder.svg?height=80&width=80",
-                quote:
-                  "I've been with the network for 2 years and have built a team of over 500 partners. The training and support are unmatched.",
-                delay: 0.1,
-              },
-              {
-                name: "Michael Chen",
-                role: "Senior Trader",
-                image: "/placeholder.svg?height=80&width=80",
-                quote:
-                  "The compensation plan is the best I've seen in the industry. I was able to replace my full-time income within 6 months.",
-                delay: 0.2,
-              },
-              {
-                name: "Elena Rodriguez",
-                role: "Regional Director",
-                image: "/placeholder.svg?height=80&width=80",
-                quote:
-                  "What sets this network apart is the community. Everyone is genuinely invested in each other's success.",
-                delay: 0.3,
-              },
-            ].map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: testimonial.delay }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-                className="group"
-              >
-                <div className="relative bg-background/50 backdrop-blur-lg border border-border/30 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                  <div className="absolute top-0 right-0 p-6 text-6xl opacity-10 font-serif">
-                    "
-                  </div>
-
-                  <p className="text-lg mb-6 relative z-10">
-                    {testimonial.quote}
-                  </p>
-
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/20 p-0.5">
-                      <Image
-                        src={testimonial.image || "/placeholder.svg"}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover rounded-full"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">{testimonial.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            {/* Person Info */}
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-primary/30 shadow-md">
+                <Image
+                  src={testimonial.image || "/placeholder.svg"}
+                  alt={testimonial.name}
+                  fill
+                  className="object-cover rounded-full"
+                />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg">{testimonial.name}</h4>
+                <p className="text-sm text-muted-foreground">
+                  {testimonial.role}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* CTA Section */}
       <section className="py-24 relative overflow-hidden">
