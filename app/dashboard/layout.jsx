@@ -392,7 +392,7 @@ export default function DashboardLayout({ children }) {
     { 
       icon: LifeBuoy, 
       label: "Support", 
-      path: "mailto:support@leveluptrade.com" 
+      path: "mailto:leveluptrade01@gmail.com" 
     },
     { icon: LogOut, label: "Logout", path: "#", onClick: logout },
   ]
