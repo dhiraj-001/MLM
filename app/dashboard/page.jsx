@@ -96,6 +96,7 @@ export default function Dashboard() {
   const [showTransferModal, setShowTransferModal] = useState(false)
   const [transferLoading, setTransferLoading] = useState(false)
   const [transferAmount, setTransferAmount] = useState("")
+  const [transferError, setTransferError] = useState("")
 
   // Set referral link
   useEffect(() => {
@@ -134,6 +135,15 @@ export default function Dashboard() {
     fetchUserData()
   }, [user, token])
 
+  // Set error message when modal opens and earning balance is 0
+  useEffect(() => {
+    if (showTransferModal && userData?.earningBalance <= 0) {
+      setTransferError("Your earning balance is $0.00. You cannot transfer funds when earning balance is zero.")
+    } else if (showTransferModal && userData?.earningBalance > 0) {
+      setTransferError("") // Clear error if balance becomes positive
+    }
+  }, [showTransferModal, userData?.earningBalance])
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink)
       .then(() => {
@@ -145,16 +155,26 @@ export default function Dashboard() {
   }
 
   const handleTransfer = async () => {
+    // Clear previous errors
+    setTransferError("");
+
     const amount = parseFloat(transferAmount);
+
+    // Check if earning balance is 0
+    if (userData?.earningBalance <= 0) {
+      setTransferError("Your earning balance is $0.00. You cannot transfer funds when earning balance is zero.");
+      return;
+    }
+
     if (!token || !amount || amount <= 0 || amount > (userData?.earningBalance || 0)) {
-      alert("Invalid transfer amount.");
+      setTransferError("Invalid transfer amount. Please enter a valid amount within your earning balance.");
       return;
     }
 
     setTransferLoading(true);
     try {
       await userService.transferBalance(amount, token);
-      
+
       // Re-fetch user profile to get updated balances
       const profileData = await userService.getProfile(token);
       setUserData(profileData.user);
@@ -162,9 +182,10 @@ export default function Dashboard() {
       alert("Transfer successful!");
       setShowTransferModal(false);
       setTransferAmount("");
+      setTransferError("");
     } catch (err) {
       console.error("Transfer failed:", err);
-      alert(`Transfer failed: ${err.message}`);
+      setTransferError(`Transfer failed: ${err.message}`);
     } finally {
       setTransferLoading(false);
     }
@@ -576,9 +597,18 @@ export default function Dashboard() {
 
             <div className="mb-4">
               <p className="text-sm font-medium">Earning Balance:</p>
-              <p className="text-lg font-bold text-green-600">
+              <p className={`text-lg font-bold ${userData?.earningBalance <= 0 ? 'text-red-600' : 'text-green-600'}`}>
                 ${userData?.earningBalance?.toFixed(2) || "0.00"}
               </p>
+
+              {/* Error Message - Below Balance */}
+              {(transferError || (showTransferModal && userData?.earningBalance <= 0)) && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-sm text-red-600">
+                    {transferError || "Your earning balance is $0.00. You cannot transfer funds when earning balance is zero."}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="mb-4">
@@ -587,22 +617,30 @@ export default function Dashboard() {
                 id="amount"
                 type="number"
                 value={transferAmount}
-                onChange={(e) => setTransferAmount(e.target.value)}
+                onChange={(e) => {
+                  setTransferAmount(e.target.value);
+                  setTransferError(""); // Clear error when user starts typing
+                }}
                 placeholder="Enter amount"
                 className="w-full mt-1 p-2 border rounded-md bg-muted/50"
+                disabled={userData?.earningBalance <= 0}
               />
             </div>
 
             <Button
               onClick={handleTransfer}
               className="w-full mb-3"
-              disabled={transferLoading || !transferAmount || parseFloat(transferAmount) <= 0 || parseFloat(transferAmount) > (userData?.earningBalance || 0)}
+              disabled={transferLoading || !transferAmount || parseFloat(transferAmount) <= 0 || parseFloat(transferAmount) > (userData?.earningBalance || 0) || userData?.earningBalance <= 0}
             >
               {transferLoading ? "Transferring..." : "Transfer"}
             </Button>
 
             <Button
-              onClick={() => setShowTransferModal(false)}
+              onClick={() => {
+                setShowTransferModal(false);
+                setTransferError("");
+                setTransferAmount("");
+              }}
               variant="outline"
               className="w-full"
             >

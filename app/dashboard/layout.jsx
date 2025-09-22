@@ -368,7 +368,7 @@ export default function DashboardLayout({ children }) {
       submenu: [
         { label: "Deposit Funds", path: "/dashboard/deposit" },
         { label: "Withdraw Funds", path: "/dashboard/withdrawal" },
-        { label: "Transfer Balance", path: "/dashboard/transfer" },
+        // { label: "Transfer Balance", path: "/dashboard/transfer" },
         { label: "Transaction History", path: "/dashboard/transactions" },
       ],
     },
