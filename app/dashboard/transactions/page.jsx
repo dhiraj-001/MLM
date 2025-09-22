@@ -179,7 +179,8 @@ export default function TransactionsPage() {
   // Calculate transaction stats
   const totalDeposits = deposits.reduce((sum, deposit) => sum + deposit.amount, 0)
   const totalWithdrawals = withdrawals.reduce((sum, withdrawal) => sum + withdrawal.amount, 0)
-  const netBalance = totalDeposits - totalWithdrawals
+  const totalbalance = user ? user.balance : 0
+  const netBalance = totalbalance - totalWithdrawals
 
   return (
     <ProtectedRoute>

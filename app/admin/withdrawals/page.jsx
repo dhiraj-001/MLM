@@ -135,7 +135,7 @@ export default function AdminWithdrawals() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border/40 bg-background shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-border/40 bg-background shadow-sm">
         {loading && withdrawals.length === 0 ? (
           <div className="flex items-center justify-center p-8">
             <RefreshCw className="h-5 w-5 animate-spin mr-2" />
@@ -147,7 +147,7 @@ export default function AdminWithdrawals() {
             <p className="text-muted-foreground">No withdrawals found</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/50">
@@ -177,14 +177,14 @@ export default function AdminWithdrawals() {
                           <div className="relative group">
                             <a href={withdrawal.proofImage} target="_blank" rel="noopener noreferrer"
                               className="text-xs text-blue-500 hover:underline">
-                              View Proof Image
+                              View QR
                             </a>
                             <ImagePreview src={withdrawal.proofImage} />
                           </div>
                         )}
                         {withdrawal.transactionId && (
                           <span className="text-xs text-muted-foreground mt-1">
-                            Txn ID: {withdrawal.transactionId}
+                            Account ID: {withdrawal.transactionId}
                           </span>
                         )}
                       </div>
