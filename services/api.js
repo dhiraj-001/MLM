@@ -279,8 +279,8 @@ export const userService = {
   /**
    * Submit quiz answers
    */
-  async submitQuiz(answers, balanceType, token) {
-    return apiService.post("/users/quiz", { answers, balanceType }, token);
+  async submitQuiz(answers, balanceType, token, isFirstDay = true) {
+    return apiService.post("/users/quiz", { answers, balanceType, isFirstDay }, token);
   },
 
   /**
@@ -324,6 +324,13 @@ export const userService = {
     }
 
     return response.json();
+  },
+
+  /**
+   * Transfer balance from earning to deposit
+   */
+  async transferBalance(amount, token) {
+    return apiService.post("/users/transfer-balance", { amount }, token);
   },
 };
 

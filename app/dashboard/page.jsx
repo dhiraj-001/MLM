@@ -18,6 +18,7 @@ import {
   CreditCard,
   User,
   Wallet,
+  ArrowRightLeft,
 } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { userService } from "@/services/api"
@@ -44,7 +45,7 @@ const Button = ({ children, className = "", variant = "default", size = "default
   }
 
   return (
-    <button 
+    <button
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
@@ -74,7 +75,7 @@ const Avatar = ({ children, className = "" }) => (
 
 const Progress = ({ value, className = "" }) => (
   <div className={`w-full bg-muted rounded-full overflow-hidden ${className}`}>
-    <div 
+    <div
       className="bg-primary h-full transition-all duration-300 ease-in-out"
       style={{ width: `${value}%` }}
     ></div>
@@ -86,11 +87,15 @@ export default function Dashboard() {
 
   // Auth context
   const { user, token } = useAuth()
+
   const [referralLink, setReferralLink] = useState("")
   const [userData, setUserData] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
   const [referralStats, setReferralStats] = useState(null)
   const [dailyReward, setDailyReward] = useState(null)
+  const [showTransferModal, setShowTransferModal] = useState(false)
+  const [transferLoading, setTransferLoading] = useState(false)
+  const [transferAmount, setTransferAmount] = useState("")
 
   // Set referral link
   useEffect(() => {
@@ -103,19 +108,19 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.id) return
-      
+
       setLoadingData(true)
       try {
         // Fetch user profile
         const profileData = await userService.getProfile(token)
         console.log("Profile Data:", profileData)
         setUserData(profileData.user)
-        
+
         // Fetch referral stats
         const referralData = await userService.getReferralCommission(user.id, token)
         console.log("Referral Data:", referralData)
         setReferralStats(referralData)
-        
+
         // Fetch daily reward
         const rewardData = await userService.getDailyReward(user.id, token)
         setDailyReward(rewardData)
@@ -138,6 +143,34 @@ export default function Dashboard() {
         console.error("Failed to copy: ", err)
       })
   }
+
+  const handleTransfer = async () => {
+    const amount = parseFloat(transferAmount);
+    if (!token || !amount || amount <= 0 || amount > (userData?.earningBalance || 0)) {
+      alert("Invalid transfer amount.");
+      return;
+    }
+
+    setTransferLoading(true);
+    try {
+      await userService.transferBalance(amount, token);
+      
+      // Re-fetch user profile to get updated balances
+      const profileData = await userService.getProfile(token);
+      setUserData(profileData.user);
+
+      alert("Transfer successful!");
+      setShowTransferModal(false);
+      setTransferAmount("");
+    } catch (err) {
+      console.error("Transfer failed:", err);
+      alert(`Transfer failed: ${err.message}`);
+    } finally {
+      setTransferLoading(false);
+    }
+  };
+
+
 
   // Recent transactions data
   const recentTransactions = [
@@ -195,7 +228,7 @@ export default function Dashboard() {
           {[
             {
               title: "Total Balance",
-              value: `$${userData?.balance?.toFixed(2) || "0.00"}`,
+              value: `${userData?.balance?.toFixed(2) || "0.00"}`,
               change: "",
               isPositive: true,
               icon: DollarSign,
@@ -203,7 +236,7 @@ export default function Dashboard() {
             },
             {
               title: "Deposit Balance",
-              value: `$${userData?.depositBalance?.toFixed(2) || "0.00"}`,
+              value: `${userData?.depositBalance?.toFixed(2) || "0.00"}`,
               change: "",
               isPositive: true,
               icon: Wallet,
@@ -211,7 +244,7 @@ export default function Dashboard() {
             },
             {
               title: "Earning Balance",
-              value: `$${userData?.earningBalance?.toFixed(2) || "0.00"}`,
+              value: `${userData?.earningBalance?.toFixed(2) || "0.00"}`,
               change: "",
               isPositive: true,
               icon: TrendingUp,
@@ -227,7 +260,7 @@ export default function Dashboard() {
             },
             {
               title: "Commission Earnings",
-              value: `$${referralStats?.totalCommission?.toFixed(2) || "0.00"}`,
+              value: `${referralStats?.totalCommission?.toFixed(2) || "0.00"}`,
               change: "",
               isPositive: true,
               icon: TrendingUp,
@@ -252,7 +285,7 @@ export default function Dashboard() {
                           ? "text-indigo-500"
                           : stat.color === "green"
                             ? "text-green-500"
-                            : stat.color === "blue"
+                          : stat.color === "blue"
                               ? "text-blue-500"
                               : "text-amber-500"
                     }`}
@@ -304,14 +337,14 @@ export default function Dashboard() {
               <div className="bg-muted/30 p-3 rounded-md text-sm break-all mb-4">
                 {referralLink || "Loading referral link..."}
               </div>
-              
-              <Button 
+
+              <Button
                 onClick={copyToClipboard}
                 className="w-full py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
               >
                 Copy to Clipboard
               </Button>
-              
+
               {/* Progress Visualization */}
               <div className="mt-8 space-y-6">
                 <div>
@@ -319,7 +352,7 @@ export default function Dashboard() {
                     <h3 className="font-medium">Network Growth</h3>
                     <Badge variant="outline" className="rounded-full">Monthly</Badge>
                   </div>
-                  
+
                   {/* Chart Placeholder */}
                   <div className="relative h-[150px] w-full bg-muted/30 rounded-lg overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -415,7 +448,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </Link>
-                
+
                 <Link href="/dashboard/withdrawal">
                   <div className="bg-muted/30 p-4 rounded-lg hover:bg-muted/50 transition-colors flex items-center gap-3 cursor-pointer">
                     <div className="bg-primary/10 p-2 rounded-full">
@@ -427,7 +460,17 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </Link>
-                
+
+                <div onClick={() => setShowTransferModal(true)} className="bg-muted/30 p-4 rounded-lg hover:bg-muted/50 transition-colors flex items-center gap-3 cursor-pointer">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      <ArrowRightLeft className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-sm">Transfer Balance</h3>
+                      <p className="text-xs text-muted-foreground">Move funds between balances</p>
+                    </div>
+                </div>
+
                 <Link href="/dashboard/profile">
                   <div className="bg-muted/30 p-4 rounded-lg hover:bg-muted/50 transition-colors flex items-center gap-3 cursor-pointer">
                     <div className="bg-primary/10 p-2 rounded-full">
@@ -439,7 +482,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </Link>
-                
+
                 <Link href="/dashboard/support">
                   <div className="bg-muted/30 p-4 rounded-lg hover:bg-muted/50 transition-colors flex items-center gap-3 cursor-pointer">
                     <div className="bg-primary/10 p-2 rounded-full">
@@ -496,7 +539,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   ))}
-                  
+
                   <div className="pt-4 mt-4 border-t border-border/10">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Daily Reward:</span>
@@ -511,7 +554,7 @@ export default function Dashboard() {
                   No transactions found
                 </div>
               )}
-              
+
               <Link href="/dashboard/transactions">
                 <Button variant="outline" className="w-full mt-4">
                   View All Transactions
@@ -521,6 +564,53 @@ export default function Dashboard() {
           </Card>
         </motion.section>
       </div>
+
+      {showTransferModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <h2 className="text-xl font-bold mb-4">Transfer Balance</h2>
+
+            <p className="text-sm text-muted-foreground mb-2">
+              Move funds from your earning balance into your deposit balance.
+            </p>
+
+            <div className="mb-4">
+              <p className="text-sm font-medium">Earning Balance:</p>
+              <p className="text-lg font-bold text-green-600">
+                ${userData?.earningBalance?.toFixed(2) || "0.00"}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="amount" className="text-sm font-medium">Amount to Transfer:</label>
+              <input
+                id="amount"
+                type="number"
+                value={transferAmount}
+                onChange={(e) => setTransferAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="w-full mt-1 p-2 border rounded-md bg-muted/50"
+              />
+            </div>
+
+            <Button
+              onClick={handleTransfer}
+              className="w-full mb-3"
+              disabled={transferLoading || !transferAmount || parseFloat(transferAmount) <= 0 || parseFloat(transferAmount) > (userData?.earningBalance || 0)}
+            >
+              {transferLoading ? "Transferring..." : "Transfer"}
+            </Button>
+
+            <Button
+              onClick={() => setShowTransferModal(false)}
+              variant="outline"
+              className="w-full"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

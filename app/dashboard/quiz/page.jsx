@@ -45,6 +45,7 @@ export default function QuizPage() {
   const [insufficientBalance, setInsufficientBalance] = useState(false)
   const [balanceOptions, setBalanceOptions] = useState(null)
   const [selectedBalanceType, setSelectedBalanceType] = useState(null)
+  const [hasPreviousSubmissions, setHasPreviousSubmissions] = useState(false)
   
   // Get user profile data to check balance
   useEffect(() => {
@@ -99,6 +100,14 @@ export default function QuizPage() {
       } else if (response.questions && response.questions.length > 0) {
         setQuestions(response.questions)
         setBalanceOptions(response.balanceOptions)
+        setHasPreviousSubmissions(response.hasPreviousSubmissions || false)
+        
+        // If user has previous submissions and deposit is eligible, auto-select deposit
+      if (response.hasPreviousSubmissions && response.balanceOptions.depositEligible) {
+  setSelectedBalanceType('deposit')
+  startQuiz('deposit')
+}
+
       } else {
         setError("No questions available for today's quiz.")
       }
@@ -122,22 +131,22 @@ export default function QuizPage() {
   }, [token, userData])
   
   // Start the quiz
-  const startQuiz = () => {
-    if (!selectedBalanceType) {
-      setError("Please select a balance type to play the quiz")
-      return
-    }
-    
-    setQuizStarted(true)
-    setTimerActive(true)
-    // Initialize empty answers object
-    const initialAnswers = {}
-    questions.forEach((q, index) => {
-      initialAnswers[index] = null
-    })
-    setAnswers(initialAnswers)
+const startQuiz = (balanceType = selectedBalanceType) => {
+  if (!balanceType) {
+    setError("Please select a balance type to play the quiz")
+    return
   }
-  
+
+  setQuizStarted(true)
+  setTimerActive(true)
+
+  const initialAnswers = {}
+  questions.forEach((q, index) => {
+    initialAnswers[index] = null
+  })
+  setAnswers(initialAnswers)
+}
+
   // Handle answer selection
   const handleSelectAnswer = (questionIndex, answerIndex) => {
     setAnswers(prev => ({
@@ -478,8 +487,8 @@ export default function QuizPage() {
                 </div>
               </div>
               <div className="p-6 md:p-8">
-                {/* Balance Selection */}
-                {balanceOptions && (
+                {/* Balance Selection - Only show if no previous submissions */}
+                {!hasPreviousSubmissions && balanceOptions && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-4">Choose Your Balance Type</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -546,6 +555,19 @@ export default function QuizPage() {
                   </div>
                 )}
                 
+                {/* Show auto-selection info for users with previous submissions */}
+                {hasPreviousSubmissions && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6 border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mr-2" />
+                      <span className="font-medium">Auto-selected: Deposit Balance</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on your previous quiz participation, we've automatically selected your deposit balance for this quiz.
+                    </p>
+                  </div>
+                )}
+                
                 <div className="mb-8">
                   <h3 className="text-lg font-semibold mb-4">Quiz Rules</h3>
                   <ul className="space-y-3 ml-2">
@@ -567,15 +589,18 @@ export default function QuizPage() {
                     </li>
                   </ul>
                 </div>
-                <div className="flex justify-center">
-                  <button
-                    onClick={startQuiz}
-                    disabled={!selectedBalanceType}
-                    className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Start Quiz <ChevronRight className="ml-2 h-5 w-5" />
-                  </button>
-                </div>
+                
+                {!hasPreviousSubmissions && (
+                  <div className="flex justify-center">
+                    <button
+                      onClick={startQuiz}
+                      disabled={!selectedBalanceType}
+                      className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Start Quiz <ChevronRight className="ml-2 h-5 w-5" />
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           ) : ( 
