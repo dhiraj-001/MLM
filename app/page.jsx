@@ -928,7 +928,7 @@ export default function Home() {
 
               {/* PDF download button */}
               <a
-                href="/Dynamic Marketing Strategy.pdf"
+                href="/WWW.LEVELUPTRADE.US.pdf"
                 download
                 target="_blank"
                 rel="noopener noreferrer"
