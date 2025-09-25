@@ -329,7 +329,7 @@ export default function ContactUs() {
                           href="mailto:support@leveluptrade.com"
                           className="text-muted-foreground hover:text-primary transition-colors"
                         >
-                          support@leveluptrade.com
+                          leveluptrade01@gmail.com
                         </a>
                       </div>
                     </div>
@@ -344,7 +344,7 @@ export default function ContactUs() {
                           href="tel:+1234567890"
                           className="text-muted-foreground hover:text-primary transition-colors"
                         >
-                          +1 (234) 567-890
+                          +91 074043 20351
                         </a>
                       </div>
                     </div>
@@ -354,15 +354,16 @@ export default function ContactUs() {
                         <MapPin className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-medium">Office</h3>
+                        <h3 className="font-medium">United States Office</h3>
                         <p className="text-muted-foreground">
-                          123 Trading Street
+                          320 W 5th Avenue,
                           <br />
-                          Suite 456
+                           P.O. Box No. 11
                           <br />
-                          New York, NY 10001
+                          Anchorage, Alaska 99501 United States
                         </p>
                       </div>
+                      
                     </div>
                   </div>
 

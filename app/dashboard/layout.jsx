@@ -385,7 +385,7 @@ export default function DashboardLayout({ children }) {
     { 
       icon: FileText, 
       label: "Documents", 
-      path: "/Dynamic Marketing Strategy.pdf", 
+      path: "/WWW.LEVELUPTRADE.US.pdf", 
       target: "_blank",
       rel: "noopener noreferrer" 
     },
