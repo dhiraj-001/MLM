@@ -333,7 +333,7 @@ export default function ContactUs() {
                         </a>
                       </div>
                     </div>
-
+{/* 
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-primary/10 rounded-full">
                         <Phone className="h-5 w-5 text-primary" />
@@ -347,7 +347,7 @@ export default function ContactUs() {
                           +91 074043 20351
                         </a>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-primary/10 rounded-full">
