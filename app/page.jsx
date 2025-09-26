@@ -85,13 +85,13 @@ export default function Home() {
               <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
               <Image
                 src="/logo.png"
-                alt="LevelUptrade Logo"
+                alt="Uptradelevel Logo"
                 fill
                 className="dark:invert relative z-10"
               />
             </div>
             <span className="text-xl font-bold">
-              <span className="text-primary">LevelUptrade</span>
+              <span className="text-primary">Uptradelevel</span>
             </span>
           </motion.div>
 
@@ -186,13 +186,13 @@ export default function Home() {
                   <div className="relative h-10 w-10">
                     <Image
                       src="/logo.png"
-                      alt="LevelUptrade Logo"
+                      alt="Uptradelevel Logo"
                       fill
                       className="dark:invert"
                     />
                   </div>
                   <span className="text-xl font-bold">
-                    <span className="text-primary">leveluptrade</span>
+                    <span className="text-primary">Uptradelevel</span>
                   </span>
                 </div>
                 <button
@@ -964,13 +964,13 @@ export default function Home() {
                   <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                   <Image
                     src="/logo.png"
-                    alt="LevelUptrade Logo"
+                    alt="uptradelevel Logo"
                     fill
                     className="dark:invert relative z-10"
                   />
                 </div>
                 <span className="text-xl font-bold">
-                  <span className="text-primary">leveluptrade</span>
+                  <span className="text-primary">Uptradelevel</span>
                 </span>
               </motion.div>
 
@@ -1114,7 +1114,7 @@ export default function Home() {
             className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center"
           >
             <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © {new Date().getFullYear()} LevelUptrade. All rights reserved.
+              © {new Date().getFullYear()} Uptradelevel. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <button

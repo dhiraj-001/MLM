@@ -23,11 +23,11 @@ const playfair = Playfair_Display({
 })
 
 export const metadata = {
-  title: "leveluptrade",
+  title: "uptradelevel",
   description:
     "Join our professional network of traders building sustainable income through our proven multi-level trading system.",
   keywords: "MLM, multi-level trading, business opportunity, passive income, financial independence, trading network",
-  authors: [{ name: "leveluptrade" }],
+  authors: [{ name: "uptradelevel" }],
 }
 
 export default function RootLayout({ children }) {

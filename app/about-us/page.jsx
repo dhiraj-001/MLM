@@ -56,13 +56,13 @@ export default function AboutUs() {
               <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
               <Image
                 src="/logo.png"
-                alt="LevelUptrade Logo"
+                alt="Uptradelevel Logo"
                 fill
                 className="dark:invert relative z-10"
               />
             </div>
             <span className="text-xl font-bold">
-              <span className="text-primary">LevelUptrade</span>
+              <span className="text-primary">Uptradelevel</span>
             </span>
           </motion.div>
 
@@ -149,7 +149,7 @@ export default function AboutUs() {
           >
             <h1 className="text-4xl font-bold mb-4 font-serif">About Us</h1>
             <p className="text-muted-foreground mb-12 max-w-2xl">
-              Discover the story behind LevelUptrade and our mission to empower
+              Discover the story behind Uptradelevel and our mission to empower
               individuals to achieve financial independence through our
               innovative trading network.
             </p>
@@ -159,7 +159,7 @@ export default function AboutUs() {
               <div className="aspect-[21/9] relative">
                 <Image
                   src="/placeholder.svg?height=500&width=1200"
-                  alt="LevelUptrade Team"
+                  alt="Uptradelevel Team"
                   fill
                   className="object-cover"
                 />
@@ -192,7 +192,7 @@ export default function AboutUs() {
                     <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent rounded-2xl blur-xl opacity-70"></div>
                     <div className="relative rounded-xl overflow-hidden aspect-square">
                       <Image
-                        src="/placeholder.svg?height=500&width=500"
+                        src="/hero-image.jpg?height=500&width=500"
                         alt="Our Story"
                         fill
                         className="object-cover"
@@ -212,7 +212,7 @@ export default function AboutUs() {
                     </h2>
                     <div className="space-y-4">
                       <p>
-                        LevelUptrade was founded in 2018 by a team of
+                        Uptradelevel was founded in 2018 by a team of
                         experienced traders and network marketing professionals
                         who recognized the need for a more transparent, ethical,
                         and effective approach to multi-level trading networks.
@@ -226,7 +226,7 @@ export default function AboutUs() {
                       </p>
                       <p>
                         With a commitment to do things differently, they built
-                        LevelUptrade on a foundation of genuine value,
+                        Uptradelevel on a foundation of genuine value,
                         comprehensive training, and a sustainable compensation
                         structure that rewards real results rather than
                         recruitment alone.
@@ -318,25 +318,25 @@ export default function AboutUs() {
                   {
                     name: "Alex Morgan",
                     role: "CEO & Founder",
-                    image: "/placeholder.svg?height=300&width=300",
+                    image: "/testimonials/1.png?height=300&width=300",
                     bio: "Former hedge fund manager with 15+ years in the trading industry.",
                   },
                   {
                     name: "Sarah Chen",
                     role: "COO",
-                    image: "/placeholder.svg?height=300&width=300",
+                    image: "/testimonials/3.png?height=300&width=300",
                     bio: "Operations expert with experience scaling global organizations.",
                   },
                   {
                     name: "Michael Rodriguez",
                     role: "Head of Training",
-                    image: "/placeholder.svg?height=300&width=300",
+                    image: "/testimonials/4.png?height=300&width=300",
                     bio: "Award-winning educator and trading strategist.",
                   },
                   {
                     name: "Jessica Williams",
                     role: "Partner Success Director",
-                    image: "/placeholder.svg?height=300&width=300",
+                    image: "/testimonials/5.png?height=300&width=300",
                     bio: "Specializes in developing support systems for network marketers.",
                   },
                 ].map((member, index) => (
@@ -436,7 +436,7 @@ export default function AboutUs() {
                     <div className="absolute -inset-4 bg-gradient-to-r from-transparent via-primary/10 to-primary/20 rounded-2xl blur-xl opacity-70"></div>
                     <div className="relative rounded-xl overflow-hidden">
                       <Image
-                        src="/placeholder.svg?height=500&width=600"
+                        src="/global-presence.jpg?height=500&width=600"
                         alt="Global Presence"
                         width={600}
                         height={500}
@@ -493,13 +493,13 @@ export default function AboutUs() {
                     <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                     <Image
                       src="/logo.png"
-                      alt="LevelUptrade Logo"
+                      alt="Uptradelevel Logo"
                       fill
                       className="dark:invert relative z-10"
                     />
                   </div>
                   <span className="text-xl font-bold">
-                    <span className="text-primary">leveluptrade</span>
+                    <span className="text-primary">Uptradelevel</span>
                   </span>
                 </motion.div>
 
@@ -643,7 +643,7 @@ export default function AboutUs() {
               className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center"
             >
               <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-                © {new Date().getFullYear()} LevelUptrade. All rights reserved.
+                © {new Date().getFullYear()} Uptradelevel. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <button
