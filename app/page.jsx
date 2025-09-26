@@ -26,11 +26,11 @@ import {
   Shield,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef(null);
   const statsRef = useRef(null);
   const featuresRef = useRef(null);
@@ -159,101 +159,81 @@ export default function Home() {
               </motion.button>
             </Link>
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden rounded-full p-2 bg-background/80 border border-border/30 shadow-sm"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="md:hidden rounded-full p-2 bg-background/80 border border-border/30 shadow-sm">
+                  <Menu className="h-5 w-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col h-full">
+                  <div className="flex justify-between items-center mb-8">
+                    <div className="flex items-center gap-2">
+                      <div className="relative h-10 w-10">
+                        <Image
+                          src="/logo.png"
+                          alt="Uptradelevel Logo"
+                          fill
+                          className="dark:invert"
+                        />
+                      </div>
+                      <span className="text-xl font-bold">
+                        <span className="text-primary">Uptradelevel</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-6 py-8">
+                    <Link
+                      href="#features"
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      Features
+                    </Link>
+                    <Link
+                      href="#stats"
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      Stats
+                    </Link>
+                    <Link
+                      href="#testimonials"
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      Testimonials
+                    </Link>
+
+                    <button
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      className="sm:hidden w-fit shadow-lg inline-block rounded-full p-2 bg-background/80 border border-border/30 hover:shadow-md transition-all duration-300"
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="h-6 w-6 text-yellow-400" />
+                      ) : (
+                        <Moon className="h-6 w-6 text-primary" />
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="mt-auto flex flex-col gap-4">
+                    <Link href="/sign-in">
+                      <button className="w-full py-3 rounded-full bg-background border border-border/50 text-foreground font-medium">
+                        Sign In
+                      </button>
+                    </Link>
+                    <Link href="/sign-up">
+                      <button className="w-full py-3 rounded-full bg-primary text-white font-medium shadow-lg shadow-primary/20">
+                        Join Now
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </motion.div>
         </div>
       </nav>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-lg md:hidden"
-          >
-            <div className="flex flex-col h-full p-6">
-              <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-2">
-                  <div className="relative h-10 w-10">
-                    <Image
-                      src="/logo.png"
-                      alt="Uptradelevel Logo"
-                      fill
-                      className="dark:invert"
-                    />
-                  </div>
-                  <span className="text-xl font-bold">
-                    <span className="text-primary">Uptradelevel</span>
-                  </span>
-                </div>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-full p-2 bg-background/80 border border-border/30"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="flex flex-col gap-6 py-8">
-                <Link
-                  href="#features"
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#stats"
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Stats
-                </Link>
-                <Link
-                  href="#testimonials"
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Testimonials
-                </Link>
-
-                <button
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="sm:hidden w-fit shadow-lg inline-block rounded-full p-2 bg-background/80 border border-border/30 hover:shadow-md transition-all duration-300"
-                >
-                  {theme === "dark" ? (
-                    <Sun className="h-6 w-6 text-yellow-400" />
-                  ) : (
-                    <Moon className="h-6 w-6 text-primary" />
-                  )}
-                </button>
-              </div>
-
-              <div className="mt-auto flex flex-col gap-4">
-                <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-3 rounded-full bg-background border border-border/50 text-foreground font-medium">
-                    Sign In
-                  </button>
-                </Link>
-                <Link href="/sign-up" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-3 rounded-full bg-primary text-white font-medium shadow-lg shadow-primary/20">
-                    Join Now
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Hero Section */}
       <section

@@ -22,10 +22,12 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function AboutUs() {
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -130,13 +132,61 @@ export default function AboutUs() {
               </motion.button>
             </Link>
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden rounded-full p-2 bg-background/80 border border-border/30 shadow-sm"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+            {/* Mobile menu */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <button className="md:hidden rounded-full p-2 bg-background/80 border border-border/30 shadow-sm">
+                  <Menu className="h-5 w-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col gap-4">
+                  <Link
+                    href="#features"
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Features
+                  </Link>
+                  <Link
+                    href="#stats"
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Stats
+                  </Link>
+                  <Link
+                    href="#testimonials"
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Testimonials
+                  </Link>
+                  <div className="flex items-center gap-4 pt-4 border-t">
+                    <button
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      className="rounded-full p-2 bg-background/80 border border-border/30 shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="h-4 w-4 text-yellow-400" />
+                      ) : (
+                        <Moon className="h-4 w-4 text-primary" />
+                      )}
+                    </button>
+                    <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
+                      <button className="px-4 py-2 rounded-full bg-background/80 border border-border/30 text-sm font-medium hover:bg-background/90 hover:border-primary/30 transition-all duration-300">
+                        Sign In
+                      </button>
+                    </Link>
+                    <Link href="/sign-up" onClick={() => setMobileMenuOpen(false)}>
+                      <button className="px-4 py-2 rounded-full bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20">
+                        Join Now
+                      </button>
+                    </Link>
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </motion.div>
         </div>
       </nav>

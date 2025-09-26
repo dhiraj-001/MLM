@@ -303,8 +303,8 @@ export default function SignUp() {
                       className="dark:invert relative z-10"
                     />
                   </div>
-                  <span className="text-xl font-bold">
-                    Level<span className="text-primary">Uptrade</span>
+                  <span className="text-xl font-bold">Uptrade
+                    <span className="text-primary">level</span>
                   </span>
                 </div>
               </Link>

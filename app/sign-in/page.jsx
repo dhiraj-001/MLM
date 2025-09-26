@@ -130,7 +130,7 @@ export default function SignIn() {
                     />
                   </div>
                   <span className="text-xl font-bold">
-                   Level<span className="text-primary">Uptrade</span>                  </span>
+                   Uptrade<span className="text-primary">level</span>                  </span>
                 </div>
               </Link>
             </motion.div>
