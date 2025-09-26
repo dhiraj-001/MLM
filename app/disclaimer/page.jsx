@@ -40,13 +40,13 @@ export default function Disclaimer() {
                 <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
                 <Image
                   src="/logo.png"
-                  alt="LevelUptrade Logo"
+                  alt="Uptradelevel Logo"
                   fill
                   className="dark:invert relative z-10"
                 />
               </div>
               <span className="text-xl font-bold">
-                <span className="text-primary">LevelUptrade</span>
+              <span className="text-primary">Uptradelevel</span>
               </span>
             </motion.div>
 
@@ -138,7 +138,7 @@ export default function Disclaimer() {
 
               <h2>1. No Financial Advice</h2>
               <p>
-                The information provided on LevelUptrade is for general
+                The information provided on Uptradelevel is for general
                 informational and educational purposes only. It should not be
                 construed as professional financial advice. Always consult with
                 a qualified financial advisor before making any investment
@@ -180,7 +180,7 @@ export default function Disclaimer() {
               <h2>5. Third-Party Links</h2>
               <p>
                 Our website may contain links to third-party websites or
-                services that are not owned or controlled by LevelUptrade. We
+                services that are not owned or controlled by Uptradelevel. We
                 have no control over, and assume no responsibility for, the
                 content, privacy policies, or practices of any third-party
                 websites or services.
@@ -197,7 +197,7 @@ export default function Disclaimer() {
 
               <h2>7. Changes to Platform</h2>
               <p>
-                LevelUptrade reserves the right to modify, suspend, or
+                Uptradelevel reserves the right to modify, suspend, or
                 discontinue any aspect of our platform at any time without
                 notice or liability.
               </p>
@@ -206,14 +206,14 @@ export default function Disclaimer() {
               <p>
                 It is your responsibility to ensure that your participation in
                 our network complies with all applicable laws and regulations in
-                your jurisdiction. LevelUptrade does not guarantee that our
+                your jurisdiction. Uptradelevel does not guarantee that our
                 services are appropriate or available for use in all locations.
               </p>
 
               <h2>9. Contact Information</h2>
               <p>
                 For questions about this disclaimer, please contact us at
-                legal@leveluptrade.com.
+                legal@uptradelevel.com.
               </p>
             </div>
           </motion.div>
@@ -237,13 +237,13 @@ export default function Disclaimer() {
                     <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                     <Image
                       src="/logo.png"
-                      alt="LevelUptrade Logo"
+                      alt="Uptradelevel Logo"
                       fill
                       className="dark:invert relative z-10"
                     />
                   </div>
                   <span className="text-xl font-bold">
-                    <span className="text-primary">leveluptrade</span>
+                    <span className="text-primary">Uptradelevel</span>
                   </span>
                 </motion.div>
 
@@ -387,7 +387,7 @@ export default function Disclaimer() {
               className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center"
             >
               <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-                © {new Date().getFullYear()} LevelUptrade. All rights reserved.
+                © {new Date().getFullYear()} Uptradelevel. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <button

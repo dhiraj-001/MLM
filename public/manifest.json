@@ -1,7 +1,7 @@
 {
-    "name": "leveluptrade",
-    "short_name": "leveluptrade",
-    "description": "leveluptrade",
+    "name": "Uptradelevel",
+    "short_name": "Uptradelevel",
+    "description": "Uptradelevel",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
