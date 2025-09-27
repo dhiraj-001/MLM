@@ -85,10 +85,8 @@ export default function AdminContacts() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/50">
-                  <th className="px-4 py-3 text-left text-sm font-medium">Date</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Phone</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Subject</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Message</th>
                 </tr>
               </thead>
@@ -96,22 +94,13 @@ export default function AdminContacts() {
                 {filteredContacts.map((contact) => (
                   <tr key={contact._id} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-sm">
-                      {format(new Date(contact.createdAt), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium">
-                      {contact.name}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
                       <div className="flex items-center">
                         <Mail className="mr-1 h-3 w-3 text-muted-foreground" />
                         {contact.email}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center">
-                        <Phone className="mr-1 h-3 w-3 text-muted-foreground" />
-                        {contact.phone || "N/A"}
-                      </div>
+                    <td className="px-4 py-3 text-sm font-medium">
+                      {contact.subject}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-start">

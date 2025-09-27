@@ -17,6 +17,7 @@ import {
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { contactService } from "../../services/api";
 
 export default function ContactUs() {
   const { theme, setTheme } = useTheme();
@@ -38,6 +39,7 @@ export default function ContactUs() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,10 +49,13 @@ export default function ContactUs() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Send only the required fields (email, subject, message) to match backend schema
+      const { email, subject, message } = formData;
+      await contactService.submitContactForm({ email, subject, message });
+
       setSubmitSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
 
@@ -58,24 +63,12 @@ export default function ContactUs() {
       setTimeout(() => {
         setSubmitSuccess(false);
       }, 5000);
-    }, 1500);
-
-    // In a real implementation, you would send the form data to your backend:
-    // try {
-    //   const response = await fetch('/api/contact', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData)
-    //   })
-    //   if (response.ok) {
-    //     setIsSubmitting(false)
-    //     setSubmitSuccess(true)
-    //     setFormData({ name: "", email: "", subject: "", message: "" })
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting form:', error)
-    //   setIsSubmitting(false)
-    // }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitError(error.message || 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -211,104 +204,116 @@ export default function ContactUs() {
                     </p>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <>
+                    {submitError && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-red-500/10 border border-red-500/30 rounded-lg p-6 mb-6"
+                      >
+                        <h3 className="text-xl font-bold mb-2 text-red-600">Error Sending Message</h3>
+                        <p className="text-red-700">{submitError}</p>
+                      </motion.div>
+                    )}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-medium mb-2"
+                          >
+                            Full Name
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                            placeholder="John Doe"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium mb-2"
+                          >
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                            placeholder="john@example.com"
+                          />
+                        </div>
+                      </div>
+
                       <div>
                         <label
-                          htmlFor="name"
+                          htmlFor="subject"
                           className="block text-sm font-medium mb-2"
                         >
-                          Full Name
+                          Subject
                         </label>
                         <input
                           type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
+                          id="subject"
+                          name="subject"
+                          value={formData.subject}
                           onChange={handleChange}
                           required
                           className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                          placeholder="John Doe"
+                          placeholder="How can we help you?"
                         />
                       </div>
+
                       <div>
                         <label
-                          htmlFor="email"
+                          htmlFor="message"
                           className="block text-sm font-medium mb-2"
                         >
-                          Email Address
+                          Message
                         </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
+                        <textarea
+                          id="message"
+                          name="message"
+                          value={formData.message}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                          placeholder="john@example.com"
-                        />
+                          rows={6}
+                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors resize-none"
+                          placeholder="Please describe your inquiry in detail..."
+                        ></textarea>
                       </div>
-                    </div>
 
-                    <div>
-                      <label
-                        htmlFor="subject"
-                        className="block text-sm font-medium mb-2"
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmitting}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                       >
-                        Subject
-                      </label>
-                      <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                        placeholder="How can we help you?"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-sm font-medium mb-2"
-                      >
-                        Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        rows={6}
-                        className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors resize-none"
-                        placeholder="Please describe your inquiry in detail..."
-                      ></textarea>
-                    </div>
-
-                    <motion.button
-                      type="submit"
-                      disabled={isSubmitting}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="h-5 w-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                          <span>Sending...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-5 w-5" />
-                          <span>Send Message</span>
-                        </>
-                      )}
-                    </motion.button>
-                  </form>
+                        {isSubmitting ? (
+                          <>
+                            <div className="h-5 w-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-5 w-5" />
+                            <span>Send Message</span>
+                          </>
+                        )}
+                      </motion.button>
+                    </form>
+                  </>
                 )}
               </div>
 

@@ -196,6 +196,18 @@ export const authService = {
 };
 
 /**
+ * Contact-specific API service
+ */
+export const contactService = {
+  /**
+   * Submit contact form
+   */
+  async submitContactForm(formData) {
+    return apiService.post("/form/contact", formData);
+  },
+};
+
+/**
  * User-specific API service
  */
 export const userService = {
