@@ -1,6 +1,16 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export const adminService = {
+  getAllTeamMembers: async (token) => {
+    const response = await fetch(`${API_URL}/admin/team-members`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error("Failed to fetch team members");
+    return response.json();
+  },
+
   getWithdrawalAccounts: async (token) => {
     const response = await fetch(`${API_URL}/admin/withdrawal-accounts`, {
       headers: {
