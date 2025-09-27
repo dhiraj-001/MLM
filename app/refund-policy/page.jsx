@@ -39,13 +39,13 @@ export default function RefundPolicy() {
               <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
               <Image
                 src="/logo.png"
-                alt="LevelUptrade Logo"
+                alt="UpTradeLevel Logo"
                 fill
                 className="dark:invert relative z-10"
               />
             </div>
             <span className="text-xl font-bold">
-              <span className="text-primary">LevelUptrade</span>
+              <span className="text-primary">UpTradeLevel</span>
             </span>
           </motion.div>
 
@@ -140,7 +140,7 @@ export default function RefundPolicy() {
 
               <h2>1. Registration Fees</h2>
               <p>
-                LevelUptrade charges a one-time registration fee to join our
+                UpTradeLevel charges a one-time registration fee to join our
                 network. This fee is refundable within 14 days of registration,
                 provided that:
               </p>
@@ -152,7 +152,7 @@ export default function RefundPolicy() {
               <p>
                 To request a refund of your registration fee, please contact our
                 support team through your account dashboard or by emailing
-                support@leveluptrade.com.
+                support@uptradelevel.com.
               </p>
 
               <h2>2. Monthly Subscription Fees</h2>
@@ -192,7 +192,7 @@ export default function RefundPolicy() {
                 </li>
               </ul>
               <p>
-                In case of event cancellation by LevelUptrade, a full refund
+                In case of event cancellation by UpTradeLevel, a full refund
                 will be issued, or you may choose to transfer your registration
                 to a future event.
               </p>
@@ -200,7 +200,7 @@ export default function RefundPolicy() {
               <h2>5. Commission Reversals</h2>
               <p>
                 Commissions earned through our network may be reversed and
-                reclaimed by LevelUptrade if:
+                reclaimed by UpTradeLevel if:
               </p>
               <ul>
                 <li>
@@ -224,7 +224,7 @@ export default function RefundPolicy() {
               <h2>7. Contact Information</h2>
               <p>
                 For questions about our refund policy or to request a refund,
-                please contact our support team at support@leveluptrade.com or
+                please contact our support team at support@uptradelevel.com or
                 through your account dashboard.
               </p>
             </div>
@@ -248,13 +248,13 @@ export default function RefundPolicy() {
                     <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                     <Image
                       src="/logo.png"
-                      alt="LevelUptrade Logo"
+                      alt="UpTradeLevel Logo"
                       fill
                       className="dark:invert relative z-10"
                     />
                   </div>
                   <span className="text-xl font-bold">
-                    <span className="text-primary">leveluptrade</span>
+                    <span className="text-primary">UpTradeLevel</span>
                   </span>
                 </motion.div>
 
@@ -398,7 +398,7 @@ export default function RefundPolicy() {
               className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center"
             >
               <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-                © {new Date().getFullYear()} LevelUptrade. All rights reserved.
+                © {new Date().getFullYear()} UpTradeLevel. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <button

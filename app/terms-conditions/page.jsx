@@ -41,13 +41,13 @@ export default function TermsConditions() {
                 <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
                 <Image
                   src="/logo.png"
-                  alt="Uptradelevel Logo"
+                  alt="UpTradeLevel Logo"
                   fill
                   className="dark:invert relative z-10"
                 />
               </div>
               <span className="text-xl font-bold">
-                <span className="text-primary">Uptradelevel</span>
+                <span className="text-primary">UpTradeLevel</span>
               </span>
           </motion.div>
 
@@ -143,7 +143,7 @@ export default function TermsConditions() {
 
               <h2>1. Introduction</h2>
               <p>
-                Welcome to Uptradelevel. These Terms and Conditions govern your
+                Welcome to UpTradeLevel. These Terms and Conditions govern your
                 use of our website, products, and services. By accessing or
                 using our platform, you agree to be bound by these Terms. Please
                 read them carefully.
@@ -151,7 +151,7 @@ export default function TermsConditions() {
 
               <h2>2. Definitions</h2>
               <p>
-                "Company", "We", "Us", "Our" refers to Uptradelevel. "Platform"
+                "Company", "We", "Us", "Our" refers to UpTradeLevel. "Platform"
                 refers to our website and services. "User", "You", "Your" refers
                 to individuals who access or use our platform. "Partners" refers
                 to individuals who have registered to participate in our
@@ -236,7 +236,7 @@ export default function TermsConditions() {
               <h2>13. Contact Information</h2>
               <p>
                 For questions about these Terms, please contact us at
-                support@leveluptrade.com.
+                support@uptradelevel.com.
               </p>
             </div>
           </motion.div>
@@ -259,13 +259,13 @@ export default function TermsConditions() {
                     <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                     <Image
                       src="/logo.png"
-                      alt="Uptradelevel Logo"
+                      alt="UpTradeLevel Logo"
                       fill
                       className="dark:invert relative z-10"
                     />
                   </div>
                   <span className="text-xl font-bold">
-                    <span className="text-primary">Uptradelevel</span>
+                    <span className="text-primary">UpTradeLevel</span>
                   </span>
                 </motion.div>
 
@@ -409,7 +409,7 @@ export default function TermsConditions() {
               className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center"
             >
               <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-                © {new Date().getFullYear()} Uptradelevel. All rights reserved.
+                © {new Date().getFullYear()} UpTradeLevel. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <button

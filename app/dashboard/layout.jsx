@@ -267,10 +267,10 @@ export default function DashboardLayout({ children }) {
       setPermissionStatus(permission)
       
       if (permission === 'granted') {
-        sendPushNotification(
-          "Notifications Enabled", 
-          "You will now receive important updates from MLM Network"
-        )
+      sendPushNotification(
+        "Notifications Enabled", 
+        "You will now receive important updates from UpTradeLevel"
+      )
         return true
       } else {
         console.log("Notification permission denied")
@@ -294,7 +294,7 @@ export default function DashboardLayout({ children }) {
         body,
         icon: '/logo.png',
         badge: '/logo.png',
-        tag: 'mlm-notification',
+        tag: 'uptradelevel-notification',
         renotify: true,
         requireInteraction: true
       }
@@ -392,7 +392,7 @@ export default function DashboardLayout({ children }) {
     { 
       icon: LifeBuoy, 
       label: "Support", 
-      path: "mailto:leveluptrade01@gmail.com" 
+      path: "mailto:uptradelevel01@gmail.com" 
     },
     { icon: LogOut, label: "Logout", path: "#", onClick: logout },
   ]
@@ -448,13 +448,13 @@ export default function DashboardLayout({ children }) {
               >
                 <Menu className="h-5 w-5" />
               </button>
-              <div className="flex items-center gap-2">
-                <div className="relative h-8 w-8">
-                  <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
-                  <Image src="/logo.png" alt="MLM Network Logo" width={32} height={32} className="relative z-10" />
-                </div>
-                <span className="text-lg font-bold">
-                 Level<span className="text-primary">Uptrade</span>
+                <div className="flex items-center gap-2">
+                  <div className="relative h-8 w-8">
+                    <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md animate-pulse"></div>
+                    <Image src="/logo.png" alt="UpTradeLevel Logo" width={32} height={32} className="relative z-10" />
+                  </div>
+                  <span className="text-lg font-bold">
+                 UpTrade<span className="text-primary">Level</span>
                 </span>
               </div>
             </div>
@@ -611,7 +611,7 @@ export default function DashboardLayout({ children }) {
                       exit={{ opacity: 0, x: -10 }}
                       className="text-lg font-bold whitespace-nowrap"
                     >
-                      Level<span className="text-primary">Uptrade</span>   
+                      UpTrade<span className="text-primary">Level</span>
                     </motion.span>
                   )}
                 </motion.div>
@@ -955,7 +955,7 @@ export default function DashboardLayout({ children }) {
 
         <footer className="border-t border-border/40 py-4 mt-10">
           <div className="container px-4 text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} MLM Trading Network. All rights reserved.
+            &copy; {new Date().getFullYear()} UpTradeLevel. All rights reserved.
           </div>
         </footer>
       </div>

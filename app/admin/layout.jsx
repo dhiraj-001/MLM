@@ -138,7 +138,7 @@ export default function AdminLayout({ children }) {
                   <div className="absolute inset-0 bg-primary rounded-full opacity-20 blur-md"></div>
                   <Image
                     src="/logo.png"
-                    alt="leveluptrade Admin"
+                    alt="UpTradeLevel Admin"
                     width={32}
                     height={32}
                     className="dark:invert relative z-10"
@@ -146,7 +146,7 @@ export default function AdminLayout({ children }) {
                 </div>
                 {!desktopCollapsed && (
                   <span className="text-lg font-bold md:block">
-                    leveluptrade <span className="text-primary">Admin</span>
+                    UpTrade<span className="text-primary">Level</span> Admin
                   </span>
                 )}
               </div>
