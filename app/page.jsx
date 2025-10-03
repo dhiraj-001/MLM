@@ -908,7 +908,7 @@ export default function Home() {
 
               {/* PDF download button */}
               <a
-                href="/WWW.LEVELUPTRADE.US.pdf"
+                href="/UPTRADELEVEL.pdf"
                 download
                 target="_blank"
                 rel="noopener noreferrer"

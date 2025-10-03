@@ -385,7 +385,7 @@ export default function DashboardLayout({ children }) {
     { 
       icon: FileText, 
       label: "Documents", 
-      path: "/WWW.LEVELUPTRADE.US.pdf", 
+      path: "/UPTRADELEVEL.pdf", 
       target: "_blank",
       rel: "noopener noreferrer" 
     },
